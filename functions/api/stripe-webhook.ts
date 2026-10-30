@@ -3,6 +3,7 @@ import { buildOrderPayload, productLineMetadata } from "../_shared/order-payload
 import { addressComplete, buildProviderFields, cjProducts, fallbackProviderFields, type CjLogistic } from "../_shared/provider-orders";
 import { chooseCjLogistic } from "../_shared/cj";
 import { startAbandonedCart, startPostPurchase } from "../_shared/brevo-marketing";
+import { sendOrderConfirmation } from "../_shared/order-confirmation";
 
 type Env = {
   STRIPE_WEBHOOK_SECRET?: string;
@@ -202,6 +203,11 @@ export async function onRequestPost(context: { request: Request; env: Env; waitU
     body: JSON.stringify(order),
   });
   if (!response.ok) return Response.json({ error: "Automation unavailable" }, { status: 502 });
+  // Ordrebekreftelse (angrerettloven § 15) to the customer. Once per session; never affects the reply.
+  if (context.env.BREVO_API_KEY) {
+    const oc = sendOrderConfirmation(context.env, session as Record<string, any>, lineItems as Array<Record<string, any>>).catch(() => null);
+    if (context.waitUntil) context.waitUntil(oc); else await oc;
+  }
   // Post-purchase e-mail 1 (Brevo). Only after the order reached Make, only for this store; never affects the reply.
   if (context.env.BREVO_API_KEY && String(meta.store || "") === STORE.slug) {
     const job = afterPurchase(session as Record<string, any>, context.env).catch(() => null);
