@@ -15,7 +15,7 @@
   };
   /* Betaling midlertidig stengt. Sett til true for å åpne kassen igjen
      (og CHECKOUT_ENABLED i functions/api/create-checkout-session.ts). */
-  const CHECKOUT_ENABLED = false;
+  const CHECKOUT_ENABLED = true;
   let started = false;
 
   function read(key, fallback) {

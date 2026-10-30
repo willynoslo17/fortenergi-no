@@ -144,14 +144,14 @@ function json(error: string, status: number, extra: Record<string, unknown> = {}
 }
 
 /** Betaling midlertidig stengt. Sett til true for å åpne Stripe Checkout igjen. */
-const CHECKOUT_ENABLED = false;
+const CHECKOUT_ENABLED = true;
 
 export async function onRequestPost(context: { request: Request; env: Env }) {
   if (!CHECKOUT_ENABLED) {
     return json("Nettbutikken åpner snart. Kontakt oss på kontakt@fortenergi.no.", 503);
   }
-  if (!context.env.STRIPE_SECRET_KEY?.startsWith("sk_test_")) {
-    return json("Test-mode payments are not configured (expects sk_test_)", 503);
+  if (!/^sk_(test|live)_/.test(context.env.STRIPE_SECRET_KEY || "")) {
+    return json("Payments are not configured (expects sk_test_ or sk_live_)", 503);
   }
 
   let body: CheckoutPayload;
