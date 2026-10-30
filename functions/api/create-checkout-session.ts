@@ -6,6 +6,7 @@ import { STORE } from "../_shared/store";
 import { verifyQuote, SUPPLIER_ID_FIELDS, type SupplierIds } from "../_shared/quote";
 import { costUsd, retailNokFromCost, marketUnitAmount } from "../_shared/pricing";
 import { resolveCjVariant } from "../_shared/cj";
+import { bfPromoAllowed } from "../_shared/black-friday";
 
 type Env = { STRIPE_SECRET_KEY?: string; CJ_API_KEY?: string };
 /** Browser cart line. Prices are never read from here, only identifiers and the server-signed quote. */
@@ -206,6 +207,10 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     "metadata[provider]": providers.length === 1 ? providers[0] : "mixed",
     "metadata[providers]": providers.join(",").slice(0, 100),
   });
+  // Black Friday 2026: show Stripe's promotion-code field (code BLACK20) only in the campaign window and only for campaign items.
+  if (bfPromoAllowed(lines.map((l) => ({ provider: l.product.provider, ref: l.product.ref, sku: l.product.sku })), Date.now(), String((context.env as any).BF_FORCE || "") === "1")) {
+    params.set("allow_promotion_codes", "true");
+  }
   SHIPPING_COUNTRIES.forEach((country, index) => {
     params.set(`shipping_address_collection[allowed_countries][${index}]`, country);
   });

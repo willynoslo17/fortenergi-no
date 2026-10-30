@@ -84,6 +84,6 @@ export async function onRequestGet(context: any) {
 <ul><li>Priser i NOK inkl. 25 % MVA</li><li>Frakt 79 kr per ordre · levering 5–20 virkedager</li><li>14 dagers angrerett – <a href="/angrerett">les mer</a></li><li>Sikker betaling via Stripe</li></ul>
 </div></main>
 <footer style="padding:30px 5%;border-top:1px solid #e5e7eb;font-size:13px;color:#64748b"><strong>${esc(STORE.brand)}</strong> er et varemerke for Martinez Lozano Internasjonal Handel, org.nr 935 407 095 MVA · <a href="/kjopsvilkar">Kjøpsvilkår</a> · <a href="/personvern">Personvern</a> · <a href="/kontakt">Kontakt</a></footer>
-</body></html>`;
+<script src="/black-friday.js" defer></script></body></html>`;
   return new Response(html, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
 }
