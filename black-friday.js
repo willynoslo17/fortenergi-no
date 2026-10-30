@@ -12,6 +12,8 @@ function render(){var n=q?now:Date.now();if(n>=start||live){txt.innerHTML="<b>BL
 else{txt.innerHTML="<b>BLACK FRIDAY</b> starter om <span aria-live='off'>"+fmt(start-n)+"</span> · <a href='/black-friday' style='color:#fff'>Se kampanjevarene</a>";}}
 render();if(!live&&!q)setInterval(render,1000);
 document.body.insertBefore(bar,document.body.firstChild);
+var FP={"armhevingsbrett-med-15-deler-tilbehor-strikker-stang-og-mage-19490095": [1079, 863], "treningsstrikksett-7-deler-baerbart-hjemmegym-15884606": [999, 799], "drikkeflaske-i-glass-for-kaldt-vann-bc8b7d56": [969, 775], "kokesett-for-camping-601776a1": [939, 751], "justerbart-kettlebellhandtak-til-manualsett-17ade0c3": [929, 743], "kettlebell-i-stopejern-13721086": [859, 687], "sportsflaske-med-sugeror-og-beskyttelsestrekk-16558587": [759, 607], "sammenleggbare-turstaver-c182bbed": [499, 399], "ultralette-turstaver-i-karbon-4b212768": [619, 495], "multifunksjonelt-magehjul-26013106": [609, 487], "stor-tursekk-for-herre-17413005": [569, 455], "justerbar-grepstrener-i-silikon-20-80-lb-16599097": [509, 407], "vanntett-liggeunderlag-og-piknikteppe-13782571": [479, 383], "tursekk-60-liter-14054815": [449, 359]};/*fp*/
+(function(){var m=location.pathname.match(/^\/p\/([^\/?#]+)/);if(!m||!live)return;var f=FP[m[1]];var pe=document.querySelector('.pp-price');if(!f||!pe)return;pe.innerHTML="<span style='color:#b91c1c'>"+f[1]+" kr</span> <small style='font-size:14px;font-weight:400;color:#555'>med koden "+B.code+" · Førpris (laveste pris siste 30 dager): <s>"+f[0]+" kr</s></small>";})();
 if(/\/black-friday/.test(location.pathname))return;
 var KEY="bf2026_popup_closed";try{if(localStorage.getItem(KEY))return;}catch(e){}
 setTimeout(function(){

@@ -4,7 +4,7 @@ import printifySelected from "../_shared/catalog-data/printify-selected.json";
 import printifyCatalog from "../_shared/catalog-data/printify-products.json";
 import { STORE } from "../_shared/store";
 import { verifyQuote, SUPPLIER_ID_FIELDS, type SupplierIds } from "../_shared/quote";
-import { costUsd, retailNokFromCost, marketUnitAmount } from "../_shared/pricing";
+import { costUsd, retailNokFromCost, retailNokFor, marketUnitAmount } from "../_shared/pricing";
 import { resolveCjVariant } from "../_shared/cj";
 import { bfPromoAllowed } from "../_shared/black-friday";
 
@@ -171,7 +171,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
   for (let index = 0; index < body.items.length; index++) {
     const item = body.items[index] || {};
     const product = await resolveLine(item, context.env);
-    const nok = product ? retailNokFromCost(product.costUsd) : 0;
+    const nok = product ? retailNokFor(product.provider, product.ref, product.costUsd) : 0;
     if (!product || !nok) {
       return json("Invalid product", 400, { line: index });
     }
