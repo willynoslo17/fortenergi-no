@@ -61,7 +61,7 @@ export async function onRequestGet(context: any) {
   );
   const sector = products[0]?.sector || "";
   return Response.json(
-    { ok: true, supplier: "printify", sector, query: query || sector, products, count: products.length, source: "printify-shop-linked", shopId: PRINTIFY_SHOP_ID, compliance: "EU/Nordic POD merch (EU print providers)", markets: ["NO", "EU", "PE"] },
+    { ok: true, supplier: "printify", sector, query: query || sector, products, count: products.length, source: "printify-shop-linked", shopId: PRINTIFY_SHOP_ID, compliance: "EU/Nordic POD merch (EU print providers)", markets: ["NO"] },
     { status: products.length ? 200 : 503, headers },
   );
 }

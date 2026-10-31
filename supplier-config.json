@@ -12,9 +12,7 @@
     "mode": "shared-account-sourcing"
   },
   "markets": [
-    "NO",
-    "EU",
-    "PE"
+    "NO"
   ],
   "printify": {
     "enabled": false,
