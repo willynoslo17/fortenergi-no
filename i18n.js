@@ -82,10 +82,12 @@
   function start() {
     var mk = document.getElementById("market"); if (mk) mk.style.display = "none";
     sections(); switcher();
-    if (lang === "nb") return;
-    var oa = window.alert, oc = window.confirm;
-    window.alert = function (m) { return oa.call(window, window.t(m)); };
-    window.confirm = function (m) { return oc.call(window, window.t(m)); };
+    /* nb.json inneholder kun produktnavn/-beskrivelser fra leverandørdata som ikke er på norsk. */
+    if (lang !== "nb") {
+      var oa = window.alert, oc = window.confirm;
+      window.alert = function (m) { return oa.call(window, window.t(m)); };
+      window.confirm = function (m) { return oc.call(window, window.t(m)); };
+    }
     fetch("/i18n/" + lang + ".json", { cache: "force-cache" }).then(function (r) { return r.json(); }).then(function (d) {
       D = d;
       if (D[document.title.trim()]) document.title = D[document.title.trim()];

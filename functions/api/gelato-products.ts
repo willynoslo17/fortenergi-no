@@ -757,7 +757,7 @@ export async function onRequestGet(context: any) {
       count: priced.length,
       source,
       diagnostics: diag,
-      markets: ["NO", "EU", "PE"],
+      markets: ["NO"],
       compliance: "EU/Nordic POD merch",
     }, { status: priced.length ? 200 : 503, headers: { ...headersOut, "x-catalog-cache": state } });
   } catch (error) {

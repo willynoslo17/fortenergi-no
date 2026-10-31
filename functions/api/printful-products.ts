@@ -327,7 +327,7 @@ export async function onRequestGet(context: any) {
       products: await withQuotes(context.env, "printful", rows, printfulIds),
       count: rows.length,
       source,
-      markets: ["NO", "EU", "PE"],
+      markets: ["NO"],
       compliance: "EU/Nordic POD merch",
     }, { status: rows.length ? 200 : 503, headers: headersOut });
   } catch (error) {
