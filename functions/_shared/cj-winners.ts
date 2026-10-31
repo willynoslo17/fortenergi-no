@@ -205,7 +205,7 @@ function gridRow(pid: string, live: any, sector: string): any | null {
     image: String(snap.image),
     supplierPriceUsd: cost,
     supplierPriceMaxUsd: cost,
-    brand: "CJ Dropshipping",
+    brand: "Fortenergi",
     supplier: "CJ Dropshipping",
     provider: "cj",
     hasCECertification: false,

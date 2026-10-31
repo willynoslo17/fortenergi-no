@@ -32,3 +32,8 @@ Auditoría 2026-10-23. Rama `cursor/fortenergi-no-auditoria-2026-10` desde `main
 ## SuperGrok
 
 Ninguno pedido (verificado 2026-10-22).
+
+## 2026-10-31 i18n
+- 4 språk NO/EN/SV/PL (maskinoversatt, bør korrekturleses)
+- Fjernet ES/Peru/Europa, skjult leverandørnavn
+- Gjenstår: Stripe-locale, Brevo-e-poster kun norsk

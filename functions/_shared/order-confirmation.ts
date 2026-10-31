@@ -46,6 +46,13 @@ export function orderFromSession(session: Record<string, any>, lineItems: Array<
   };
 }
 
+
+const OC_I18N = (support: string, base: string) => [
+  ["en", "English", `Thank you for your order. This e-mail is your order confirmation (order number, items and total above, prices incl. 25 % VAT). We will send tracking details when the parcel has shipped. You have a 14-day right of withdrawal under the Norwegian Cancellation Act (angrerettloven), counted from the day you receive the goods: notify us using the cancellation form or by e-mail to ${support}. You also have the right to complain about defects under the Norwegian Consumer Purchases Act (2 years, 5 years for goods intended to last substantially longer). Terms: ${base}/kjopsvilkar.html?lang=en`],
+  ["sv", "Svenska", `Tack för din beställning. Detta e-postmeddelande är din orderbekräftelse (ordernummer, varor och totalbelopp ovan, priser inkl. 25 % moms). Vi skickar spårningsinformation när paketet har skickats. Du har 14 dagars ångerrätt enligt den norska ångerrättslagen (angrerettloven), räknat från den dag du tar emot varan: meddela oss via ångerblanketten eller via e-post till ${support}. Du har även reklamationsrätt enligt den norska konsumentköplagen (2 år, 5 år för varor avsedda att hålla väsentligt längre). Villkor: ${base}/kjopsvilkar.html?lang=sv`],
+  ["pl", "Polski", `Dziękujemy za zamówienie. Ten e-mail jest potwierdzeniem zamówienia (numer zamówienia, produkty i kwota łączna powyżej, ceny zawierają 25 % VAT). Prześlemy dane do śledzenia przesyłki, gdy paczka zostanie wysłana. Przysługuje Ci 14-dniowe prawo odstąpienia od umowy zgodnie z norweską ustawą o prawie odstąpienia (angrerettloven), liczone od dnia otrzymania towaru: poinformuj nas za pomocą formularza odstąpienia lub e-mailem na adres ${support}. Przysługuje Ci również prawo do reklamacji zgodnie z norweską ustawą o sprzedaży konsumenckiej (2 lata, 5 lat dla towarów przeznaczonych do znacznie dłuższego użytkowania). Regulamin: ${base}/kjopsvilkar.html?lang=pl`],
+];
+
 export function renderConfirmation(o: OcOrder): { subject: string; html: string; text: string } {
   const mva = o.tax ?? Math.round(o.total - o.total / 1.25); // 25 % MVA included in all prices
   const date = o.date.toLocaleDateString("nb-NO", { timeZone: "Europe/Oslo", day: "2-digit", month: "2-digit", year: "numeric" });
@@ -63,10 +70,12 @@ ${o.discount ? `<tr><td colspan="2">Rabatt</td><td style="text-align:right">−$
 <h3>Levering</h3><p>${DELIVERY} Du får beskjed med sporingsinformasjon når pakken er sendt. <a href="${BASE}/frakt-og-levering.html">Frakt og levering</a></p>
 <h3>Angrerett – 14 dager</h3><p>Du har 14 dagers angrerett etter angrerettloven. Fristen løper fra dagen du mottar varen (ved flere varer levert hver for seg: fra siste vare). Gi oss beskjed innen fristen, f.eks. med <a href="${BASE}/angreskjema.html">angreskjemaet</a> eller en e-post til ${SUPPORT}. Du må returnere varen senest 14 dager etter at du har gitt melding, og bærer selv returkostnaden. Vi tilbakebetaler hele beløpet inkl. standard frakt innen 14 dager. Les mer: <a href="${BASE}/angrerett.html">angrerett</a> og <a href="${BASE}/kjopsvilkar.html">kjøpsvilkår</a>.</p>
 <h3>Reklamasjon</h3><p>Du har reklamasjonsrett etter forbrukerkjøpsloven (2 år, 5 år for varer ment å vare vesentlig lenger).</p>
+${OC_I18N(SUPPORT, BASE).map(([l, n, t]) => `<div lang="${l}" style="margin-top:14px;font-size:13px;color:#444"><b>${n}</b><p style="margin:4px 0">${t}</p></div>`).join("")}
 <hr><p style="font-size:12px;color:#666">Selger: ${SELLER} (driver nettbutikken ${esc(STORE.brand)}), org.nr. ${ORGNR}<br>${ADDRESS}<br>Kontakt: <a href="mailto:${SUPPORT}">${SUPPORT}</a> · <a href="${BASE}/">${STORE.domain}</a></p></body></html>`;
   const text = [`Ordrebekreftelse ${o.orderNumber} – ${STORE.brand}`, `Ordredato: ${date}`, ...o.lines.map((l) => `${l.quantity} x ${l.name}: ${kr(l.amount)}`),
     `Frakt: ${o.shipping ? kr(o.shipping) : "Gratis"}`, o.discount ? `Rabatt: -${kr(o.discount)}` : "", `Totalt inkl. MVA: ${kr(o.total)} (herav MVA ${kr(mva)})`,
     `Levering: ${DELIVERY}`, `Angrerett 14 dager: ${BASE}/angreskjema.html eller ${SUPPORT}. Vilkår: ${BASE}/kjopsvilkar.html`,
+    ...OC_I18N(SUPPORT, BASE).map(([, n, t]) => `\n${n}: ${t}`),
     `Selger: ${SELLER}, org.nr. ${ORGNR}, ${ADDRESS}. Kontakt: ${SUPPORT}`].filter(Boolean).join("\n");
   return { subject, html, text };
 }
