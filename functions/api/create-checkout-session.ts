@@ -6,6 +6,7 @@ import printifyCatalog from "../_shared/catalog-data/printify-products.json";
 import { STORE } from "../_shared/store";
 import { verifyQuote, SUPPLIER_ID_FIELDS, type SupplierIds } from "../_shared/quote";
 import { costUsd, retailNokFromCost, retailNokFor, marketUnitAmount } from "../_shared/pricing";
+import { profitSafeShippingNok } from "../_shared/order-profit";
 import { resolveCjVariant } from "../_shared/cj";
 import { bfPromoAllowed } from "../_shared/black-friday";
 
@@ -241,10 +242,18 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     }
     params.set(`line_items[${index}][quantity]`, String(line.quantity));
   });
+  // Profit guard (2026-11-01): free shipping only when the order still makes money; otherwise 79 kr, or more to break even.
+  const merchNok = lines.reduce((sum, line) => sum + line.nok * line.quantity, 0);
+  const baseShipping = market.shipping;
+  const guard = market.currency === "nok"
+    ? profitSafeShippingNok(lines.map((l) => ({ provider: l.product.provider, ref: l.product.ref, costUsd: l.product.costUsd, ids: l.product.ids as any, quantity: l.quantity, nok: l.nok })), baseShipping, market.shipping)
+    : null;
+  const shippingAmount = Math.round((guard ? guard.shippingNok : baseShipping) * 100);
+  params.set("metadata[shipping_guard]", guard ? (guard.raised ? "raised" : "ok") : "n/a");
   const shippingIndex = lines.length;
   params.set(`line_items[${shippingIndex}][price_data][currency]`, market.currency);
-  params.set(`line_items[${shippingIndex}][price_data][unit_amount]`, String(Math.round(market.shipping * 100)));
-  params.set(`line_items[${shippingIndex}][price_data][product_data][name]`, "Standard shipping");
+  params.set(`line_items[${shippingIndex}][price_data][unit_amount]`, String(shippingAmount));
+  params.set(`line_items[${shippingIndex}][price_data][product_data][name]`, shippingAmount === 0 ? "Gratis frakt" : "Frakt");
   params.set(`line_items[${shippingIndex}][price_data][product_data][metadata][kind]`, "shipping");
   params.set(`line_items[${shippingIndex}][quantity]`, "1");
 
