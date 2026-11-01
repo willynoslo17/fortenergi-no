@@ -34,7 +34,7 @@ async function loadCatalog(context: any): Promise<any[]> {
 }
 
 function notFound(origin: string) {
-  return new Response(`<!doctype html><html lang="nb"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Produktet finnes ikke – ${esc(STORE.brand)}</title><link rel="stylesheet" href="/legal.css"></head><body><main style="max-width:720px;margin:60px auto;padding:0 20px;font-family:Inter,Arial,sans-serif"><h1>Produktet er ikke tilgjengelig</h1><p>Det kan være utsolgt eller fjernet fra sortimentet.</p><p><a href="/#produkter">Se alle produkter</a></p></main></body></html>`, { status: 404, headers: { "content-type": "text/html; charset=utf-8" } });
+  return new Response(`<!doctype html><html lang="nb"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="3;url=/"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Produktet finnes ikke – ${esc(STORE.brand)}</title><link rel="stylesheet" href="/legal.css"></head><body><main style="max-width:720px;margin:60px auto;padding:0 20px;font-family:Inter,Arial,sans-serif"><h1>Produktet er ikke tilgjengelig</h1><p>Det kan være utsolgt eller fjernet fra sortimentet. Nye produkter kommer snart.</p><p><a href="/#produkter">Se alle produkter</a></p></main></body></html>`, { status: 200, headers: { "content-type": "text/html; charset=utf-8", "x-robots-tag": "noindex" } });
 }
 
 export async function onRequestGet(context: any) {
