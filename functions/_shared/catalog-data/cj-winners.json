@@ -39,6 +39,7 @@
     "compression sleeve"
   ],
   "pids": [
+    "2409020544471625200",
     "1498840760773120000",
     "1412656563163893760",
     "2512110525031630900",
@@ -1887,6 +1888,18 @@
       "supplierPriceMaxUsd": 14.34,
       "keyword": "",
       "description": "Oppladbart varmebelte for mage og korsrygg: 3 varmenivåer (45/55/65 °C), 4 vibrasjonsmoduser og skjerm. 3,7 V, USB-lading. Modell LJ-Y703 med CE (EMC) og RoHS-dokumentasjon.",
+      "certified": "2026-11-01"
+    },
+    {
+      "id": "2409020544471625200",
+      "sku": "CJYD212606902BY",
+      "name": "Oppladbar elektrisk tannbørste X3 med reiseetui og 4 børstehoder",
+      "nameEn": "Electric Toothbrush Rechargeable Universal Soft Brush",
+      "category": "fitness",
+      "image": "https://oss-cf.cjdropshipping.com/product/2024/09/02/05/c221a1b5-06cf-439e-8f34-9f9af2448df6.jpg",
+      "supplierPriceMaxUsd": 2.74,
+      "keyword": "",
+      "description": "Oppladbar elektrisk tannbørste med magnetisk motor, over 5 moduser og lav støy (under 36 dB). Settet har tannbørste, USB-lader, 4 børstehoder, reiseetui og holder. Modell X3. CE (EMC 2014/30/EU, DL-20210318022C) og RoHS (DL-20210318023C) for modell X3.",
       "certified": "2026-11-01"
     }
   ]
