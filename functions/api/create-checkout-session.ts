@@ -267,7 +267,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
   });
   const result = await stripe.json() as { url?: string; error?: { message?: string } };
   if (!stripe.ok || !result.url) return json(result.error?.message || "Stripe checkout unavailable", 502);
-  return Response.json({ url: result.url });
+  return Response.json({ url: result.url, shippingNok: shippingAmount / 100, shippingRaised: Boolean(guard?.raised) });
 }
 
 export function onRequest() {
