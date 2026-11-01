@@ -1,3 +1,4 @@
+import * as OV from "../_shared/price-overrides";
 import { DEFAULT_VID } from "../_shared/price-overrides";
 // Server-only cost tables (functions/ is not served by Pages); the public /catalog copies carry priceNok only.
 import cjCatalog from "../_shared/catalog-data/cj-selected.json";
@@ -142,6 +143,18 @@ async function resolveLine(item: CartItem, env: Env): Promise<ResolvedLine | nul
   return staticLookup(item);
 }
 
+/** 2026-11-01 owner rule: hidden or uncertified products/variants are never sellable (server-side, all providers). */
+function sellable(p: { ref?: string; sku?: string; ids?: any }): boolean {
+  const ids = p.ids || {};
+  const keys = [p.ref, p.sku, ids.cj_pid, ids.printify_product_id].filter((v) => v != null && v !== "").map(String);
+  const hidden: Set<string> | undefined = (OV as any).HIDDEN, cert: Set<string> | undefined = (OV as any).CERTIFIED;
+  const excl: Set<string> | undefined = (OV as any).EXCLUDED_VIDS;
+  if (hidden && keys.some((k) => hidden.has(k))) return false;
+  if ((OV as any).CERT_ONLY && !(cert && keys.some((k) => cert.has(k)))) return false;
+  if (excl && ids.cj_vid && excl.has(String(ids.cj_vid))) return false;
+  return true;
+}
+
 function json(error: string, status: number, extra: Record<string, unknown> = {}) {
   return Response.json({ error, ...extra }, { status });
 }
@@ -176,6 +189,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     if (product && product.provider === "cj" && !(product.ids as any)?.cj_vid && DEFAULT_VID[String(product.ref)]) {
       product.ids = { ...product.ids, cj_vid: DEFAULT_VID[String(product.ref)] };
     }
+    if (product && !sellable(product)) return json("Product not available", 400, { line: index });
     const nok = product ? retailNokFor(product.provider, product.ref, product.costUsd, (product.ids as any)?.cj_vid) : 0;
     if (!product || !nok) {
       return json("Invalid product", 400, { line: index });
@@ -191,6 +205,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     if (cjLookups++ >= MAX_CJ_LOOKUPS) break;
     const variant = await resolveCjVariant(String(line.product.ids.cj_pid), context.env);
     if (variant) line.product.ids = { ...line.product.ids, cj_vid: variant.vid };
+    if (!sellable(line.product)) return json("Product not available", 400);
   }
 
   const providers = [...new Set(lines.map((line) => line.product.provider))];
