@@ -17,7 +17,7 @@
  */
 import CONFIG from "./catalog-data/cj-winners.json";
 
-type Snapshot = { id: string; sku?: string; name: string; nameEn?: string; category?: string; image: string; supplierPriceMaxUsd: number; keyword?: string };
+type Snapshot = { id: string; sku?: string; name: string; nameEn?: string; category?: string; image: string; supplierPriceMaxUsd: number; keyword?: string; description?: string };
 type WinnersConfig = {
   keywords?: string[];
   pids?: string[];
@@ -192,7 +192,7 @@ function gridRow(pid: string, live: any, sector: string): any | null {
   const snap = SNAPSHOT.get(pid);
   const liveCost = Math.max(Number(live?.supplierPriceMaxUsd) || 0, Number(live?.supplierPriceUsd) || 0);
   if (live && live.image && liveCost > 0 && (snap || eligible(live))) {
-    return snap ? { ...live, name: snap.name, category: snap.category || live.category, cat: snap.category || live.cat } : live;
+    return snap ? { ...live, name: snap.name, category: snap.category || live.category, cat: snap.category || live.cat, ...(snap.description ? { description: snap.description } : {}) } : live;
   }
   if (!snap || !snap.image || !(Number(snap.supplierPriceMaxUsd) > 0)) return null;
   const cost = Number(snap.supplierPriceMaxUsd);
@@ -211,6 +211,7 @@ function gridRow(pid: string, live: any, sector: string): any | null {
     hasCECertification: false,
     compliance: "EU/Nordic curated — no fake medical/drug/CE-toy claims",
     keyword: snap.keyword || "",
+    ...(snap.description ? { description: String(snap.description) } : {}),
   };
 }
 

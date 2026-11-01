@@ -1,4 +1,4 @@
-import { PRICE_OVERRIDE, HIDDEN, CERT_ONLY, CERTIFIED } from "./price-overrides";
+import { PRICE_OVERRIDE, HIDDEN, CERT_ONLY, CERTIFIED, VARIANT_PRICE, EXCLUDED_VIDS } from "./price-overrides";
 /**
  * Retail price rule (owner decision 2026-10-02), used for display AND for what Stripe charges:
  *   retail NOK = supplier cost of the variant actually sold, converted to NOK (USD 10.8 / EUR 11.7) x 2.5,
@@ -56,11 +56,13 @@ export function costUsd(provider: string, product: any): number {
 }
 
 /** Retail NOK for a specific product: hidden -> 0 (unsellable), market override if set, else the cost rule. */
-export function retailNokFor(provider: string, ref: string | null | undefined, cost: number): number {
+export function retailNokFor(provider: string, ref: string | null | undefined, cost: number, vid?: string | null): number {
   const key = String(ref ?? "");
   if (CERT_ONLY && !(key && CERTIFIED.has(key))) return 0; // no confirmed certificate -> hidden (sincert 2026-10-31)
   if (String(provider).toLowerCase() === "cj" && key) {
     if (HIDDEN.has(key)) return 0;
+    if (vid && EXCLUDED_VIDS.has(String(vid))) return 0; // variant not covered by the certificate
+    if (cost && vid && VARIANT_PRICE[String(vid)]) return VARIANT_PRICE[String(vid)];
     if (cost && PRICE_OVERRIDE[key]) return PRICE_OVERRIDE[key];
   }
   return cost ? retailNokFromCost(cost) : 0;

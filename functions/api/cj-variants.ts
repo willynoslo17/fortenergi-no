@@ -35,7 +35,7 @@ export async function onRequestGet(context: any) {
     const label = (chosen.length ? chosen : values.filter(Boolean)).join(" / ");
     const name = `${baseName} – ${label}`.slice(0, 200);
     const signed = await signQuote(context.env, { provider: "cj", ref: pid, sku: v.sku, name, cost: v.costUsd, ids: { cj_pid: pid, cj_vid: v.vid } });
-    return { vid: v.vid, label, values, image: v.image, priceNok: retailNokFor("cj", pid, v.costUsd), quote: signed };
+    return { vid: v.vid, label, values, image: v.image, priceNok: retailNokFor("cj", pid, v.costUsd, String(v.vid)), quote: signed };
   }));
   const usable = variants.filter((v) => v.quote && v.priceNok > 0);
   return Response.json({ ok: true, single: usable.length <= 1, options, variants: usable }, { headers });

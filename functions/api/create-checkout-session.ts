@@ -1,3 +1,4 @@
+import { DEFAULT_VID } from "../_shared/price-overrides";
 // Server-only cost tables (functions/ is not served by Pages); the public /catalog copies carry priceNok only.
 import cjCatalog from "../_shared/catalog-data/cj-selected.json";
 import printifySelected from "../_shared/catalog-data/printify-selected.json";
@@ -171,7 +172,10 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
   for (let index = 0; index < body.items.length; index++) {
     const item = body.items[index] || {};
     const product = await resolveLine(item, context.env);
-    const nok = product ? retailNokFor(product.provider, product.ref, product.costUsd) : 0;
+    if (product && product.provider === "cj" && !(product.ids as any)?.cj_vid && DEFAULT_VID[String(product.ref)]) {
+      product.ids = { ...product.ids, cj_vid: DEFAULT_VID[String(product.ref)] };
+    }
+    const nok = product ? retailNokFor(product.provider, product.ref, product.costUsd, (product.ids as any)?.cj_vid) : 0;
     if (!product || !nok) {
       return json("Invalid product", 400, { line: index });
     }
